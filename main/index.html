@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP Standing Desk Controller</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+    }
+
+    .button-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      padding: 12px;
+      font-size: 16px;
+      color: white;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .terminal {
+      width: 100%;
+      max-width: 800px;
+      height: 400px;
+      background-color: #000;
+      color: #0f0;
+      padding: 10px;
+      overflow-y: auto;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .terminal p {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>ESP Standing Desk Controller</h1>
+  <div class="button-container">
+    <button class="button" onmousedown="startCommand('up')" onmouseup="stopCommand()">Up</button>
+    <button class="button" onmousedown="startCommand('down')" onmouseup="stopCommand()">Down</button>
+    <button class="button" onclick="sendCommand('stop')">Stop</button>
+    <button class="button" onclick="sendCommand('standing')">Standing</button>
+    <button class="button" onclick="sendCommand('seating')">Seating</button>
+  </div>
+  <div class="terminal" id="terminal"></div>
+
+  <script>
+    let commandSent = false;
+
+    function logMessage(message) {
+      const terminal = document.getElementById('terminal');
+      const log = document.createElement('p');
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
+      const timestamp = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+      log.textContent = `[${timestamp}] ${message}`;
+      terminal.appendChild(log);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function sendCommand(command) {
+      if (commandSent) return;
+      commandSent = true;
+      logMessage(`Sending request: ${command}`);
+      
+      fetch(`/${command}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server responded with status ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(data => {
+          logMessage(`Server response: ${data}`);
+        })
+        .catch(error => {
+          logMessage(`Error: ${error.message}`);
+        })
+        .finally(() => {
+          commandSent = false;
+        });
+    }
+
+    function startCommand(command) {
+      sendCommand(command);
+    }
+
+    function stopCommand() {
+      sendCommand('stop');
+    }
+  </script>
+</body>
+</html>
