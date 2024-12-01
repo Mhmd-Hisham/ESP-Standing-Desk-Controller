@@ -38,3 +38,8 @@ I'm happy with the results so far but there's always room for improvement.
 - https://blog.nerds.cool/2023/09/02/flexispot-standing-desk-custom-firmware-1-x/
 - https://lastminuteengineers.com/esp8266-pinout-reference/
 - https://www.dynapar.com/technology/encoder_basics/quadrature_encoder/
+
+
+## Meta
+
+Mohamed Hisham – [G-Mail](mailto:Mohamed00Hisham@Gmail.com) | [GitHub](https://github.com/Mhmd-Hisham) | [LinkedIn](https://www.linkedin.com/in/Mhmd-Hisham/)
